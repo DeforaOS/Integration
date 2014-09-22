@@ -1,6 +1,6 @@
 PACKAGE	= Integration
 VERSION	= 0.0.0
-SUBDIRS	= doc
+SUBDIRS	= doc src
 RM	= rm -f
 LN	= ln -f
 TAR	= tar -czvf
@@ -26,6 +26,12 @@ dist:
 		$(PACKAGE)-$(VERSION)/doc/xsessions/Makefile \
 		$(PACKAGE)-$(VERSION)/doc/xsessions/DeforaOS.desktop \
 		$(PACKAGE)-$(VERSION)/doc/xsessions/project.conf \
+		$(PACKAGE)-$(VERSION)/src/Makefile \
+		$(PACKAGE)-$(VERSION)/src/project.conf \
+		$(PACKAGE)-$(VERSION)/src/Panel/Makefile \
+		$(PACKAGE)-$(VERSION)/src/Panel/project.conf \
+		$(PACKAGE)-$(VERSION)/src/Panel/applets/keyboard.c \
+		$(PACKAGE)-$(VERSION)/src/Panel/applets/project.conf \
 		$(PACKAGE)-$(VERSION)/Makefile \
 		$(PACKAGE)-$(VERSION)/project.conf
 	$(RM) -- $(PACKAGE)-$(VERSION)
