@@ -1,4 +1,4 @@
-SUBDIRS	= Panel Phone
+SUBDIRS	= plugins
 
 
 all: subdirs

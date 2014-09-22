@@ -32,6 +32,10 @@ dist:
 		$(PACKAGE)-$(VERSION)/src/Panel/project.conf \
 		$(PACKAGE)-$(VERSION)/src/Panel/applets/keyboard.c \
 		$(PACKAGE)-$(VERSION)/src/Panel/applets/project.conf \
+		$(PACKAGE)-$(VERSION)/src/Phone/Makefile \
+		$(PACKAGE)-$(VERSION)/src/Phone/project.conf \
+		$(PACKAGE)-$(VERSION)/src/Phone/plugins/pulseaudio.c \
+		$(PACKAGE)-$(VERSION)/src/Phone/plugins/project.conf \
 		$(PACKAGE)-$(VERSION)/Makefile \
 		$(PACKAGE)-$(VERSION)/project.conf
 	$(RM) -- $(PACKAGE)-$(VERSION)
