@@ -36,6 +36,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/src/Panel/applets/project.conf \
 		$(PACKAGE)-$(VERSION)/src/Phone/Makefile \
 		$(PACKAGE)-$(VERSION)/src/Phone/project.conf \
+		$(PACKAGE)-$(VERSION)/src/Phone/plugins/notify.c \
 		$(PACKAGE)-$(VERSION)/src/Phone/plugins/pulseaudio.c \
 		$(PACKAGE)-$(VERSION)/src/Phone/plugins/Makefile \
 		$(PACKAGE)-$(VERSION)/src/Phone/plugins/project.conf \
