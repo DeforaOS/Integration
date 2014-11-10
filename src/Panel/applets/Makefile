@@ -1,4 +1,5 @@
-TARGETS	= keyboard.so
+TARGETS	= $(OBJDIR)keyboard.so
+OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
 LIBDIR	= $(PREFIX)/lib
@@ -18,15 +19,15 @@ INSTALL	= install
 
 all: $(TARGETS)
 
-keyboard_OBJS = keyboard.o
+keyboard_OBJS = $(OBJDIR)keyboard.o
 keyboard_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS) `pkg-config --cflags libDesktop`
 keyboard_LDFLAGS = $(LDFLAGSF) $(LDFLAGS) `pkg-config --libs libDesktop`
 
-keyboard.so: $(keyboard_OBJS)
-	$(CCSHARED) -o keyboard.so $(keyboard_OBJS) $(keyboard_LDFLAGS)
+$(OBJDIR)keyboard.so: $(keyboard_OBJS)
+	$(CCSHARED) -o $(OBJDIR)keyboard.so $(keyboard_OBJS) $(keyboard_LDFLAGS)
 
-keyboard.o: keyboard.c
-	$(CC) $(keyboard_CFLAGS) -c keyboard.c
+$(OBJDIR)keyboard.o: keyboard.c
+	$(CC) $(keyboard_CFLAGS) -o $(OBJDIR)keyboard.o -c keyboard.c
 
 clean:
 	$(RM) -- $(keyboard_OBJS)
@@ -36,7 +37,7 @@ distclean: clean
 
 install: $(TARGETS)
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Panel/applets
-	$(INSTALL) -m 0644 keyboard.so $(DESTDIR)$(LIBDIR)/Panel/applets/keyboard.so
+	$(INSTALL) -m 0644 $(OBJDIR)keyboard.so $(DESTDIR)$(LIBDIR)/Panel/applets/keyboard.so
 
 uninstall:
 	$(RM) -- $(DESTDIR)$(LIBDIR)/Panel/applets/keyboard.so
