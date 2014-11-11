@@ -21,13 +21,8 @@
 #if GTK_CHECK_VERSION(3, 0, 0)
 # include <gtk/gtkx.h>
 #endif
-#if 0 /* XXX avoid a dependency on Panel */
-# include <Desktop/Panel.h>
-#else
-# define PANEL_CLIENT_MESSAGE	"DEFORAOS_DESKTOP_PANEL_CLIENT"
-# define PANEL_MESSAGE_EMBED	1
-#endif
-#include "Phone.h"
+#include <Desktop/Panel.h>
+#include <Desktop/Phone.h>
 
 
 /* Notify */
