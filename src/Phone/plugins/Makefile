@@ -21,7 +21,7 @@ INSTALL	= install
 all: $(TARGETS)
 
 notify_OBJS = $(OBJDIR)notify.o
-notify_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
+notify_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS) `pkg-config --cflags Panel`
 notify_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
 $(OBJDIR)notify.so: $(notify_OBJS)
