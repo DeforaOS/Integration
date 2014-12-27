@@ -37,7 +37,7 @@ distclean: clean
 
 install: $(TARGETS)
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Panel/applets
-	$(INSTALL) -m 0644 $(OBJDIR)keyboard.so $(DESTDIR)$(LIBDIR)/Panel/applets/keyboard.so
+	$(INSTALL) -m 0755 $(OBJDIR)keyboard.so $(DESTDIR)$(LIBDIR)/Panel/applets/keyboard.so
 
 uninstall:
 	$(RM) -- $(DESTDIR)$(LIBDIR)/Panel/applets/keyboard.so

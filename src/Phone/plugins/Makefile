@@ -48,9 +48,9 @@ distclean: clean
 
 install: $(TARGETS)
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Phone/plugins
-	$(INSTALL) -m 0644 $(OBJDIR)notify.so $(DESTDIR)$(LIBDIR)/Phone/plugins/notify.so
+	$(INSTALL) -m 0755 $(OBJDIR)notify.so $(DESTDIR)$(LIBDIR)/Phone/plugins/notify.so
 	$(MKDIR) $(DESTDIR)$(LIBDIR)/Phone/plugins
-	$(INSTALL) -m 0644 $(OBJDIR)pulseaudio.so $(DESTDIR)$(LIBDIR)/Phone/plugins/pulseaudio.so
+	$(INSTALL) -m 0755 $(OBJDIR)pulseaudio.so $(DESTDIR)$(LIBDIR)/Phone/plugins/pulseaudio.so
 
 uninstall:
 	$(RM) -- $(DESTDIR)$(LIBDIR)/Phone/plugins/notify.so
