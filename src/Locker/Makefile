@@ -1,4 +1,4 @@
-SUBDIRS	= Locker Panel Phone
+SUBDIRS	= plugins
 MKDIR	= mkdir -m 0755 -p
 
 

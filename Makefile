@@ -33,6 +33,11 @@ dist:
 		$(PACKAGE)-$(VERSION)/doc/xsessions/project.conf \
 		$(PACKAGE)-$(VERSION)/src/Makefile \
 		$(PACKAGE)-$(VERSION)/src/project.conf \
+		$(PACKAGE)-$(VERSION)/src/Locker/Makefile \
+		$(PACKAGE)-$(VERSION)/src/Locker/project.conf \
+		$(PACKAGE)-$(VERSION)/src/Locker/plugins/panel.c \
+		$(PACKAGE)-$(VERSION)/src/Locker/plugins/Makefile \
+		$(PACKAGE)-$(VERSION)/src/Locker/plugins/project.conf \
 		$(PACKAGE)-$(VERSION)/src/Panel/Makefile \
 		$(PACKAGE)-$(VERSION)/src/Panel/project.conf \
 		$(PACKAGE)-$(VERSION)/src/Panel/applets/keyboard.c \
