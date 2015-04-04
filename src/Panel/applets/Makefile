@@ -6,8 +6,9 @@ LIBDIR	= $(PREFIX)/lib
 CC	= cc
 CPPFLAGSF=
 CPPFLAGS=
-CFLAGSF	= -W -fPIC
+CFLAGSF	= -W -fPIC `pkg-config --cflags Panel`
 CFLAGS	= -Wall -g -O2 -pedantic
+LDFLAGSF= `pkg-config --libs Panel`
 AR	= ar
 RANLIB	= ranlib
 CCSHARED= $(CC) -shared
@@ -20,8 +21,8 @@ INSTALL	= install
 all: $(TARGETS)
 
 keyboard_OBJS = $(OBJDIR)keyboard.o
-keyboard_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS) `pkg-config --cflags libDesktop`
-keyboard_LDFLAGS = $(LDFLAGSF) $(LDFLAGS) `pkg-config --libs libDesktop`
+keyboard_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
+keyboard_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
 $(OBJDIR)keyboard.so: $(keyboard_OBJS)
 	$(CCSHARED) -o $(OBJDIR)keyboard.so $(keyboard_OBJS) $(keyboard_LDFLAGS)
