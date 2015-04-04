@@ -36,6 +36,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/src/Panel/Makefile \
 		$(PACKAGE)-$(VERSION)/src/Panel/project.conf \
 		$(PACKAGE)-$(VERSION)/src/Panel/applets/keyboard.c \
+		$(PACKAGE)-$(VERSION)/src/Panel/applets/player.c \
 		$(PACKAGE)-$(VERSION)/src/Panel/applets/Makefile \
 		$(PACKAGE)-$(VERSION)/src/Panel/applets/project.conf \
 		$(PACKAGE)-$(VERSION)/src/Phone/Makefile \
