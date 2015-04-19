@@ -4,5 +4,4 @@ Name=Calculator
 Comment=Simple desktop calculator
 URL=file://@PREFIX@/lib/Surfer/htmlapps/calculator.html
 Icon=accessories-calculator
-Type=Application
 Categories=Utility;Calculator;GTK;
