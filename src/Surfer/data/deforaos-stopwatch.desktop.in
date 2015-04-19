@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=URL
+Name=Stopwatch
+Comment=Simple desktop stopwatch
+URL=file://@PREFIX@/lib/Surfer/htmlapps/stopwatch.html
+Icon=appointment-soon
+Categories=Utility;GTK;
