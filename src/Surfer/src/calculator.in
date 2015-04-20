@@ -1,0 +1,9 @@
+#!/bin/sh
+#$Id$
+
+
+#variables
+#executables
+HTMLAPP="@BINDIR@/htmlapp"
+
+$HTMLAPP -- "@PREFIX@/lib/Surfer/htmlapps/calculator.html"
