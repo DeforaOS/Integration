@@ -19,7 +19,7 @@
 #include <System.h>
 #include <Desktop.h>
 #include <Desktop/Player.h>
-#include <Desktop/Panel.h>
+#include <Desktop/Panel/applet.h>
 #define _(string) gettext(string)
 
 
@@ -72,6 +72,8 @@ static void _init_add(GtkWidget * box, char const * stock, GtkIconSize iconsize,
 static Player * _player_init(PanelAppletHelper * helper, GtkWidget ** widget)
 {
 	Player * player;
+	GtkOrientation orientation;
+	GtkIconSize iconsize;
 
 	if((player = object_new(sizeof(*player))) == NULL)
 	{
@@ -79,26 +81,28 @@ static Player * _player_init(PanelAppletHelper * helper, GtkWidget ** widget)
 		return NULL;
 	}
 	player->helper = helper;
+	orientation = panel_window_get_orientation(helper->window);
 #if GTK_CHECK_VERSION(3, 0, 0)
-	player->widget = gtk_box_new(helper->orientation, 0);
+	player->widget = gtk_box_new(orientation, 0);
 #else
-	player->widget = (helper->orientation == GTK_ORIENTATION_HORIZONTAL)
+	player->widget = (orientation == GTK_ORIENTATION_HORIZONTAL)
 		? gtk_hbox_new(FALSE, 0) : gtk_vbox_new(FALSE, 0);
 #endif
-	_init_add(player->widget, GTK_STOCK_MEDIA_PREVIOUS, helper->icon_size,
+	iconsize = panel_window_get_iconsize(helper->window);
+	_init_add(player->widget, GTK_STOCK_MEDIA_PREVIOUS, iconsize,
 			_("Previous"), _player_on_previous);
-	_init_add(player->widget, GTK_STOCK_MEDIA_REWIND, helper->icon_size,
-			_("Rewind"), _player_on_rewind);
-	_init_add(player->widget, GTK_STOCK_MEDIA_PLAY, helper->icon_size,
-			_("Play"), _player_on_play);
-	_init_add(player->widget, GTK_STOCK_MEDIA_PAUSE, helper->icon_size,
-			_("Pause"), _player_on_pause);
-	_init_add(player->widget, GTK_STOCK_MEDIA_STOP, helper->icon_size,
-			_("Stop"), _player_on_stop);
-	_init_add(player->widget, GTK_STOCK_MEDIA_FORWARD, helper->icon_size,
+	_init_add(player->widget, GTK_STOCK_MEDIA_REWIND, iconsize, _("Rewind"),
+			_player_on_rewind);
+	_init_add(player->widget, GTK_STOCK_MEDIA_PLAY, iconsize, _("Play"),
+			_player_on_play);
+	_init_add(player->widget, GTK_STOCK_MEDIA_PAUSE, iconsize, _("Pause"),
+			_player_on_pause);
+	_init_add(player->widget, GTK_STOCK_MEDIA_STOP, iconsize, _("Stop"),
+			_player_on_stop);
+	_init_add(player->widget, GTK_STOCK_MEDIA_FORWARD, iconsize,
 			_("Forward"), _player_on_forward);
-	_init_add(player->widget, GTK_STOCK_MEDIA_NEXT, helper->icon_size,
-			_("Next"), _player_on_next);
+	_init_add(player->widget, GTK_STOCK_MEDIA_NEXT, iconsize, _("Next"),
+			_player_on_next);
 	gtk_widget_show_all(player->widget);
 	*widget = player->widget;
 	return player;

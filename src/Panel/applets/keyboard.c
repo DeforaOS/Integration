@@ -29,7 +29,7 @@
 #include <libintl.h>
 #include <Desktop.h>
 #include <Desktop/Keyboard.h>
-#include <Desktop/Panel.h>
+#include <Desktop/Panel/applet.h>
 #include <gdk/gdkx.h>
 #if GTK_CHECK_VERSION(3, 0, 0)
 # include <gtk/gtkx.h>
@@ -131,7 +131,8 @@ static Keyboard * _keyboard_init(PanelAppletHelper * helper,
 	gtk_button_set_relief(GTK_BUTTON(keyboard->button), GTK_RELIEF_NONE);
 	g_signal_connect(G_OBJECT(keyboard->button), "toggled", G_CALLBACK(
 				_keyboard_on_toggled), keyboard);
-	image = gtk_image_new_from_icon_name(applet.icon, helper->icon_size);
+	image = gtk_image_new_from_icon_name(applet.icon,
+			panel_window_get_icon_size(helper->window));
 	gtk_container_add(GTK_CONTAINER(keyboard->button), image);
 	gtk_widget_show_all(keyboard->button);
 	keyboard->source = g_idle_add(_init_idle, keyboard);
