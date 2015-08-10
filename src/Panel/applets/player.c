@@ -88,7 +88,7 @@ static Player * _player_init(PanelAppletHelper * helper, GtkWidget ** widget)
 	player->widget = (orientation == GTK_ORIENTATION_HORIZONTAL)
 		? gtk_hbox_new(FALSE, 0) : gtk_vbox_new(FALSE, 0);
 #endif
-	iconsize = panel_window_get_iconsize(helper->window);
+	iconsize = panel_window_get_icon_size(helper->window);
 	_init_add(player->widget, GTK_STOCK_MEDIA_PREVIOUS, iconsize,
 			_("Previous"), _player_on_previous);
 	_init_add(player->widget, GTK_STOCK_MEDIA_REWIND, iconsize, _("Rewind"),
