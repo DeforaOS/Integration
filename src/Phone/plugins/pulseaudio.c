@@ -62,7 +62,7 @@ static void _pa_play(Pulseaudio * pa, char const * sound);
 PhonePluginDefinition plugin =
 {
 	"Pulseaudio",
-	"system-config-users",
+	"audio-x-generic",
 	NULL,
 	_pa_init,
 	_pa_destroy,
