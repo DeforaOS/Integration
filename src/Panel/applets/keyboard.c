@@ -27,6 +27,7 @@
 #include <string.h>
 #include <errno.h>
 #include <libintl.h>
+#include <System.h>
 #include <Desktop.h>
 #include <Desktop/Keyboard.h>
 #include <Desktop/Panel/applet.h>
@@ -115,7 +116,10 @@ static Keyboard * _keyboard_init(PanelAppletHelper * helper,
 	GtkWidget * image;
 
 	if((keyboard = malloc(sizeof(*keyboard))) == NULL)
+	{
+		error_set("%s: %s", applet.name, strerror(errno));
 		return NULL;
+	}
 	keyboard->helper = helper;
 	keyboard->source = 0;
 	keyboard->pid = -1;
@@ -400,8 +404,9 @@ static void _settings_on_height_value_changed(gpointer data)
 static int _keyboard_spawn(Keyboard * keyboard, unsigned long * xid)
 {
 	PanelAppletHelper * helper = keyboard->helper;
-	char * argv[] = { "sh", "-c", PANEL_KEYBOARD_COMMAND_DEFAULT, NULL };
-	GSpawnFlags flags = G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD;
+	char * argv[] = { "/bin/sh", "-c", PANEL_KEYBOARD_COMMAND_DEFAULT,
+		NULL };
+	const unsigned int flags = G_SPAWN_DO_NOT_REAP_CHILD;
 	char const * p;
 	char * q = NULL;
 	gboolean res;
@@ -425,11 +430,16 @@ static int _keyboard_spawn(Keyboard * keyboard, unsigned long * xid)
 	g_child_watch_add(keyboard->pid, _keyboard_on_child, keyboard);
 	/* FIXME no longer use blocking I/O */
 	if((size = read(out, buf, sizeof(buf) - 1)) <= 0) /* XXX may block */
-		/* XXX not very explicit... */
-		return -helper->error(helper->panel, "read", 1);
+	{
+		error_set("%s: %s: %s", applet.name, "read", strerror(errno));
+		return -helper->error(helper->panel, error_get(), 1);
+	}
 	buf[size] = '\0';
 	if(sscanf(buf, "%lu", xid) != 1)
-		return -1; /* XXX warn the user */
+	{
+		error_set("%s: %s", applet.name, "Could not start keyboard");
+		return -helper->error(helper->panel, error_get(), 1);
+	}
 	return 0;
 }
 
@@ -440,6 +450,7 @@ static gboolean _on_child_timeout(gpointer data);
 
 static void _keyboard_on_child(GPid pid, gint status, gpointer data)
 {
+	const int timeout = 1000;
 	Keyboard * keyboard = data;
 
 #ifdef DEBUG
@@ -450,7 +461,7 @@ static void _keyboard_on_child(GPid pid, gint status, gpointer data)
 	if(WIFEXITED(status) || WIFSIGNALED(status))
 	{
 		g_spawn_close_pid(keyboard->pid);
-		keyboard->source = g_timeout_add(1000, _on_child_timeout,
+		keyboard->source = g_timeout_add(timeout, _on_child_timeout,
 				keyboard);
 	}
 }
