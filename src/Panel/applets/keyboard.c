@@ -446,11 +446,8 @@ static int _keyboard_spawn(Keyboard * keyboard, unsigned long * xid)
 
 /* callbacks */
 /* keyboard_on_child */
-static gboolean _on_child_timeout(gpointer data);
-
 static void _keyboard_on_child(GPid pid, gint status, gpointer data)
 {
-	const int timeout = 1000;
 	Keyboard * keyboard = data;
 
 #ifdef DEBUG
@@ -461,20 +458,10 @@ static void _keyboard_on_child(GPid pid, gint status, gpointer data)
 	if(WIFEXITED(status) || WIFSIGNALED(status))
 	{
 		g_spawn_close_pid(keyboard->pid);
-		keyboard->source = g_timeout_add(timeout, _on_child_timeout,
-				keyboard);
+		keyboard->pid = -1;
+		gtk_toggle_button_set_active(
+				GTK_TOGGLE_BUTTON(keyboard->button), FALSE);
 	}
-}
-
-static gboolean _on_child_timeout(gpointer data)
-{
-	Keyboard * keyboard = data;
-	unsigned long xid;
-
-	keyboard->source = 0;
-	if(_keyboard_spawn(keyboard, &xid) == 0)
-		gtk_socket_add_id(GTK_SOCKET(keyboard->socket), xid);
-	return FALSE;
 }
 
 
@@ -504,7 +491,7 @@ static void _keyboard_on_toggled(GtkWidget * widget, gpointer data)
 	gtk_window_move(GTK_WINDOW(keyboard->window), x, y);
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
 	{
-		if(keyboard->pid == -1)
+		if(keyboard->pid <= 0)
 		{
 			_keyboard_spawn(keyboard, &xid);
 			gtk_socket_add_id(GTK_SOCKET(keyboard->socket), xid);
