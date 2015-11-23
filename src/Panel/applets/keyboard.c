@@ -432,13 +432,13 @@ static int _keyboard_spawn(Keyboard * keyboard, unsigned long * xid)
 	if((size = read(out, buf, sizeof(buf) - 1)) <= 0) /* XXX may block */
 	{
 		error_set("%s: %s: %s", applet.name, "read", strerror(errno));
-		return -helper->error(helper->panel, error_get(), 1);
+		return -helper->error(helper->panel, error_get(NULL), 1);
 	}
 	buf[size] = '\0';
 	if(sscanf(buf, "%lu", xid) != 1)
 	{
 		error_set("%s: %s", applet.name, "Could not start keyboard");
-		return -helper->error(helper->panel, error_get(), 1);
+		return -helper->error(helper->panel, error_get(NULL), 1);
 	}
 	return 0;
 }
