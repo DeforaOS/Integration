@@ -78,6 +78,8 @@ static void _event_show(gboolean show);
 
 static int _panel_event(PanelPlugin * panel, LockerEvent event)
 {
+	(void) panel;
+
 	switch(event)
 	{
 		case LOCKER_EVENT_ACTIVATED:
