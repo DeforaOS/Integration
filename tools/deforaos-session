@@ -26,7 +26,7 @@
 
 #variables
 #executables
-DESKTOP="desktop -w"
+DESKTOP="desktop"
 LOCKER="locker"
 PANEL="panel"
 WINDOWMANAGER="metacity"
