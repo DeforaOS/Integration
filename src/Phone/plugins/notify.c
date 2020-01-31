@@ -142,18 +142,18 @@ static int _event_notification(NotifyPhonePlugin * notify, PhoneEvent * event)
 	switch(event->notification.ntype)
 	{
 		case PHONE_NOTIFICATION_TYPE_ERROR:
-			stock = GTK_STOCK_DIALOG_ERROR;
+			stock = "gtk-dialog-error";
 			if(title == NULL)
 				title = "Error";
 			break;
 		case PHONE_NOTIFICATION_TYPE_WARNING:
-			stock = GTK_STOCK_DIALOG_WARNING;
+			stock = "gtk-dialog-warning";
 			if(title == NULL)
 				title = "Warning";
 			break;
 		case PHONE_NOTIFICATION_TYPE_INFO:
 		default:
-			stock = GTK_STOCK_DIALOG_INFO;
+			stock = "gtk-dialog-info";
 			if(title == NULL)
 				title = "Information";
 			break;
@@ -164,7 +164,7 @@ static int _event_notification(NotifyPhonePlugin * notify, PhoneEvent * event)
 	hbox = gtk_hbox_new(FALSE, 4);
 #endif
 	/* icon */
-	image = gtk_image_new_from_stock(stock, GTK_ICON_SIZE_DIALOG);
+	image = gtk_image_new_from_icon_name(stock, GTK_ICON_SIZE_DIALOG);
 	gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, TRUE, 0);
 	/* title */
 #if GTK_CHECK_VERSION(3, 0, 0)
@@ -173,18 +173,29 @@ static int _event_notification(NotifyPhonePlugin * notify, PhoneEvent * event)
 	vbox = gtk_vbox_new(FALSE, 4);
 #endif
 	label = gtk_label_new(title);
+#if GTK_CHECK_VERSION(3, 0, 0)
+	g_object_set(label, "halign", GTK_ALIGN_START, NULL);
+	g_object_set(label, "valign", GTK_ALIGN_START, NULL);
+	gtk_widget_override_font(label, bold);
+#else
 	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.0);
 	gtk_widget_modify_font(label, bold);
+#endif
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, TRUE, 0);
 	/* label */
 	label = gtk_label_new(event->notification.message);
+#if GTK_CHECK_VERSION(3, 0, 0)
+	g_object_set(label, "halign", GTK_ALIGN_START, NULL);
+	g_object_set(label, "valign", GTK_ALIGN_START, NULL);
+#else
 	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.0);
+#endif
 	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
 	/* button */
 	button = gtk_button_new();
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-	image = gtk_image_new_from_stock(GTK_STOCK_CLOSE,
+	image = gtk_image_new_from_icon_name("gtk-close",
 			GTK_ICON_SIZE_BUTTON);
 	gtk_button_set_image(GTK_BUTTON(button), image);
 	g_signal_connect_swapped(button, "clicked", G_CALLBACK(

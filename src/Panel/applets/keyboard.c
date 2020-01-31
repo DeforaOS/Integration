@@ -210,6 +210,7 @@ static int _keyboard_on_message(void * data, uint32_t value1, uint32_t value2,
 	Keyboard * keyboard = data;
 	KeyboardMessage message = value1;
 	gboolean active;
+	(void) value3;
 
 	switch(message)
 	{

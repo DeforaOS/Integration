@@ -81,6 +81,8 @@ static int _event_modem(ModemEvent * event);
 
 static int _locker_event(LockerPhonePlugin * locker, PhoneEvent * event)
 {
+	(void) locker;
+
 	switch(event->type)
 	{
 		case PHONE_EVENT_TYPE_MODEM_EVENT:

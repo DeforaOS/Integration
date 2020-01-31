@@ -444,6 +444,8 @@ static void _sofia_callback(nua_event_t event, int status, char const * phrase,
 	Sofia * sofia = modem;
 	ModemPluginHelper * helper = modem->helper;
 	ModemEvent mevent;
+	(void) nua;
+	(void) hmagic;
 
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s(%u)\n", __func__, event);
