@@ -252,11 +252,10 @@ static void _notify_widget_remove(NotifyPhonePlugin * notify,
 	if(i != notify->widgets_cnt - 1)
 		return;
 	for(; i > 0 && notify->widgets[i - 1] == NULL; i--);
-	if((p = realloc(notify->widgets, (i - 1) * sizeof(*p))) == NULL
-			&& (i - 1) != 0)
+	if((p = realloc(notify->widgets, i * sizeof(*p))) == NULL && i != 0)
 		return;
 	notify->widgets = p;
-	notify->widgets_cnt = i - 1;
+	notify->widgets_cnt = i;
 }
 
 
