@@ -162,6 +162,7 @@ static int _sofia_start(ModemPlugin * modem, unsigned int retry)
 	char const * q;
 	nua_handle_t * handle;
 	ModemEvent mevent;
+	(void) retry;
 
 #ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s()\n", __func__);
