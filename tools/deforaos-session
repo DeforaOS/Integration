@@ -25,11 +25,21 @@
 
 
 #variables
+PREFIX="/usr/local"
+PROGNAME="deforaos-session"
+SYSCONFDIR="$PREFIX/etc"
+VENDOR="DeforaOS"
 #executables
 DESKTOP="desktop"
 LOCKER="locker"
 PANEL="panel"
 WINDOWMANAGER="metacity"
+
+#load local settings
+[ -f "$SYSCONFDIR/$VENDOR/$PROGNAME.conf" ] &&
+	. "$SYSCONFDIR/$VENDOR/$PROGNAME.conf"
+[ -f "$HOME/.config/$VENDOR/$PROGNAME.conf" ] &&
+	. "$HOME/.config/$VENDOR/$PROGNAME.conf"
 
 
 #start the panel
