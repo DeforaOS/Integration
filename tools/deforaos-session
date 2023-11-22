@@ -25,14 +25,17 @@
 
 
 #variables
+GTK3_SETTINGS_INI="$HOME/.config/gtk-3.0/settings.ini"
 PREFIX="/usr/local"
 PROGNAME="deforaos-session"
 SYSCONFDIR="$PREFIX/etc"
 VENDOR="DeforaOS"
 #executables
+CAT="cat"
 DEBUG=
 DESKTOP="desktop"
 LOCKER="locker"
+MKDIR="mkdir -p"
 PANEL="panel"
 WINDOWMANAGER="metacity"
 
@@ -41,6 +44,20 @@ WINDOWMANAGER="metacity"
 	. "$SYSCONFDIR/$VENDOR/$PROGNAME.conf"
 [ -f "$HOME/.config/$VENDOR/$PROGNAME.conf" ] &&
 	. "$HOME/.config/$VENDOR/$PROGNAME.conf"
+
+
+#configure Gtk+ if necessary
+#XXX assumes Gtk+ 3
+if [ ! -f "$GTK3_SETTINGS_INI" ]; then
+	$DEBUG $MKDIR "${GTK3_SETTINGS_INI%/*}" &&
+		$DEBUG $CAT > "$GTK3_SETTINGS_INI" << EOF
+[Settings]
+gtk-button-images = true
+gtk-font-name = Sans 9
+gtk-icon-theme-name = gnome
+gtk-menu-images = true
+EOF
+fi
 
 
 #start the panel
