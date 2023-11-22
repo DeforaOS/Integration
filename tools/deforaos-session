@@ -25,6 +25,8 @@
 
 
 #variables
+GTK_DEFAULT_FONT="Sans 9"
+GTK_DEFAULT_ICON_THEME="gnome"
 GTK3_SETTINGS_INI="$HOME/.config/gtk-3.0/settings.ini"
 PREFIX="/usr/local"
 PROGNAME="deforaos-session"
@@ -53,8 +55,8 @@ if [ ! -f "$GTK3_SETTINGS_INI" ]; then
 		$DEBUG $CAT > "$GTK3_SETTINGS_INI" << EOF
 [Settings]
 gtk-button-images = true
-gtk-font-name = Sans 9
-gtk-icon-theme-name = gnome
+gtk-font-name = $GTK_DEFAULT_FONT
+gtk-icon-theme-name = $GTK_DEFAULT_ICON_THEME
 gtk-menu-images = true
 EOF
 fi
