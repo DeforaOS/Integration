@@ -31,9 +31,12 @@
 #include <Desktop.h>
 #include <Desktop/Keyboard.h>
 #include <Desktop/Panel/applet.h>
-#include <gdk/gdkx.h>
-#if GTK_CHECK_VERSION(3, 0, 0)
-# include <gtk/gtkx.h>
+#if defined(GDK_WINDOWING_X11)
+# if GTK_CHECK_VERSION(3, 0, 0)
+#  include <gtk/gtkx.h>
+# else
+#  include <gdk/gdkx.h>
+# endif
 #endif
 
 
@@ -72,6 +75,7 @@ static void _keyboard_destroy(Keyboard * keyboard);
 static GtkWidget * _keyboard_settings(Keyboard * keyboard, gboolean apply,
 		gboolean reset);
 
+#if defined(GDK_WINDOWING_X11)
 /* useful */
 static int _keyboard_spawn(Keyboard * keyboard, unsigned long * xid);
 
@@ -79,6 +83,7 @@ static int _keyboard_spawn(Keyboard * keyboard, unsigned long * xid);
 static void _keyboard_on_child(GPid pid, gint status, gpointer data);
 static gboolean _keyboard_on_removed(void);
 static void _keyboard_on_toggled(GtkWidget * widget, gpointer data);
+#endif
 
 
 /* constants */
@@ -103,15 +108,18 @@ PanelAppletDefinition applet =
 /* private */
 /* functions */
 /* keyboard_init */
+#if defined(GDK_WINDOWING_X11)
 static void _init_size(Keyboard * keyboard, PanelAppletHelper * helper);
 /* callbacks */
 static gboolean _init_idle(gpointer data);
 static int _keyboard_on_message(void * data, uint32_t value1, uint32_t value2,
 		uint32_t value3);
+#endif
 
 static Keyboard * _keyboard_init(PanelAppletHelper * helper,
 		GtkWidget ** widget)
 {
+#if defined(GDK_WINDOWING_X11)
 	Keyboard * keyboard;
 	GtkWidget * image;
 
@@ -129,9 +137,9 @@ static Keyboard * _keyboard_init(PanelAppletHelper * helper,
 	keyboard->pr_box = NULL;
 	_init_size(keyboard, helper);
 	keyboard->button = gtk_toggle_button_new();
-#if GTK_CHECK_VERSION(2, 12, 0)
+# if GTK_CHECK_VERSION(2, 12, 0)
 	gtk_widget_set_tooltip_text(keyboard->button, "Show keyboard");
-#endif
+# endif
 	gtk_button_set_relief(GTK_BUTTON(keyboard->button), GTK_RELIEF_NONE);
 	g_signal_connect(G_OBJECT(keyboard->button), "toggled", G_CALLBACK(
 				_keyboard_on_toggled), keyboard);
@@ -142,8 +150,16 @@ static Keyboard * _keyboard_init(PanelAppletHelper * helper,
 	keyboard->source = g_idle_add(_init_idle, keyboard);
 	*widget = keyboard->button;
 	return keyboard;
+#else
+	(void) helper;
+	(void) widget;
+
+	error_set_code(-ENOSYS, "%s", "X11 support not detected");
+	return NULL;
+#endif
 }
 
+#if defined(GDK_WINDOWING_X11)
 static void _init_size(Keyboard * keyboard, PanelAppletHelper * helper)
 {
 	char const * p;
@@ -167,10 +183,10 @@ static void _init_size(Keyboard * keyboard, PanelAppletHelper * helper)
 		keyboard->width = keyboard->height * 3;
 	else if(keyboard->height == -1)
 		keyboard->height = keyboard->width / 3;
-#ifdef DEBUG
+# ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s() width=%d height=%d\n", __func__,
 			keyboard->width, keyboard->height);
-#endif
+# endif
 }
 
 /* callbacks */
@@ -183,9 +199,9 @@ static gboolean _init_idle(gpointer data)
 		return FALSE;
 	keyboard->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_accept_focus(GTK_WINDOW(keyboard->window), FALSE);
-#if GTK_CHECK_VERSION(2, 6, 0)
+# if GTK_CHECK_VERSION(2, 6, 0)
 	gtk_window_set_focus_on_map(GTK_WINDOW(keyboard->window), FALSE);
-#endif
+# endif
 	/* XXX let this be configurable (resize applications automatically) */
 	gtk_window_set_type_hint(GTK_WINDOW(keyboard->window),
 			GDK_WINDOW_TYPE_HINT_DOCK);
@@ -227,11 +243,13 @@ static int _keyboard_on_message(void * data, uint32_t value1, uint32_t value2,
 	}
 	return 0;
 }
+#endif
 
 
 /* keyboard_destroy */
 static void _keyboard_destroy(Keyboard * keyboard)
 {
+#if defined(GDK_WINDOWING_X11)
 	desktop_message_unregister(keyboard->window, _keyboard_on_message,
 			keyboard);
 	if(keyboard->source > 0)
@@ -240,6 +258,9 @@ static void _keyboard_destroy(Keyboard * keyboard)
 		g_spawn_close_pid(keyboard->pid);
 	gtk_widget_destroy(keyboard->button);
 	free(keyboard);
+#else
+	(void) keyboard;
+#endif
 }
 
 
@@ -400,6 +421,7 @@ static void _settings_on_height_value_changed(gpointer data)
 }
 
 
+#if defined(GDK_WINDOWING_X11)
 /* useful */
 /* keyboard_spawn */
 static int _keyboard_spawn(Keyboard * keyboard, unsigned long * xid)
@@ -451,9 +473,9 @@ static void _keyboard_on_child(GPid pid, gint status, gpointer data)
 {
 	Keyboard * keyboard = data;
 
-#ifdef DEBUG
+# ifdef DEBUG
 	fprintf(stderr, "DEBUG: %s(%u) %u\n", __func__, pid, keyboard->pid);
-#endif
+# endif
 	if(keyboard->source != 0 || keyboard->pid != pid)
 		return;
 	if(WIFEXITED(status) || WIFSIGNALED(status))
@@ -502,3 +524,4 @@ static void _keyboard_on_toggled(GtkWidget * widget, gpointer data)
 	else
 		gtk_widget_hide(keyboard->window);
 }
+#endif
