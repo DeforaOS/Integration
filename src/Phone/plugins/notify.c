@@ -18,8 +18,10 @@
 #include <stdlib.h>
 #include <System.h>
 #include <Desktop.h>
-#if GTK_CHECK_VERSION(3, 0, 0)
-# include <gtk/gtkx.h>
+#if defined(GDK_WINDOWING_X11)
+# if GTK_CHECK_VERSION(3, 0, 0)
+#  include <gtk/gtkx.h>
+# endif
 #endif
 #include <Desktop/Panel.h>
 #include <Desktop/Phone.h>
@@ -51,6 +53,7 @@ static NotifyPhonePlugin * _notify_init(PhonePluginHelper * helper);
 static void _notify_destroy(NotifyPhonePlugin * notify);
 static int _notify_event(NotifyPhonePlugin * notify, PhoneEvent * event);
 
+#if defined(GDK_WINDOWING_X11)
 static NotifyWidget * _notify_widget_add(NotifyPhonePlugin * notify);
 static void _notify_widget_remove(NotifyPhonePlugin * notify,
 		NotifyWidget * widget);
@@ -62,6 +65,7 @@ static void _notifywidget_delete(NotifyWidget * widget);
 /* callbacks */
 static void _notifywidget_on_close(gpointer data);
 static gboolean _notifywidget_on_timeout(gpointer data);
+#endif
 
 
 /* public */
@@ -83,6 +87,7 @@ PhonePluginDefinition plugin =
 /* notify_init */
 static NotifyPhonePlugin * _notify_init(PhonePluginHelper * helper)
 {
+#if defined(GDK_WINDOWING_X11)
 	NotifyPhonePlugin * notify;
 
 	if((notify = object_new(sizeof(*notify))) == NULL)
@@ -91,12 +96,19 @@ static NotifyPhonePlugin * _notify_init(PhonePluginHelper * helper)
 	notify->widgets = NULL;
 	notify->widgets_cnt = 0;
 	return notify;
+#else
+	(void) helper;
+
+	error_set_code(-ENOSYS, "%s", "X11 support not detected");
+	return NULL;
+#endif
 }
 
 
 /* notify_destroy */
 static void _notify_destroy(NotifyPhonePlugin * notify)
 {
+#if defined(GDK_WINDOWING_X11)
 	size_t i;
 
 	for(i = 0; i < notify->widgets_cnt; i++)
@@ -104,14 +116,20 @@ static void _notify_destroy(NotifyPhonePlugin * notify)
 			_notifywidget_delete(notify->widgets[i]);
 	free(notify->widgets);
 	object_delete(notify);
+#else
+	(void) notify;
+#endif
 }
 
 
 /* notify_event */
+#if defined(GDK_WINDOWING_X11)
 static int _event_notification(NotifyPhonePlugin * notify, PhoneEvent * event);
+#endif
 
 static int _notify_event(NotifyPhonePlugin * notify, PhoneEvent * event)
 {
+#if defined(GDK_WINDOWING_X11)
 	switch(event->type)
 	{
 		case PHONE_EVENT_TYPE_NOTIFICATION:
@@ -119,9 +137,15 @@ static int _notify_event(NotifyPhonePlugin * notify, PhoneEvent * event)
 		default:
 			break;
 	}
+#else
+	(void) notify;
+	(void) event;
+
+#endif
 	return 0;
 }
 
+#if defined(GDK_WINDOWING_X11)
 static int _event_notification(NotifyPhonePlugin * notify, PhoneEvent * event)
 {
 	NotifyWidget * widget;
@@ -158,38 +182,38 @@ static int _event_notification(NotifyPhonePlugin * notify, PhoneEvent * event)
 				title = "Information";
 			break;
 	}
-#if GTK_CHECK_VERSION(3, 0, 0)
+# if GTK_CHECK_VERSION(3, 0, 0)
 	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
+# else
 	hbox = gtk_hbox_new(FALSE, 4);
-#endif
+# endif
 	/* icon */
 	image = gtk_image_new_from_icon_name(stock, GTK_ICON_SIZE_DIALOG);
 	gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, TRUE, 0);
 	/* title */
-#if GTK_CHECK_VERSION(3, 0, 0)
+# if GTK_CHECK_VERSION(3, 0, 0)
 	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
-#else
+# else
 	vbox = gtk_vbox_new(FALSE, 4);
-#endif
+# endif
 	label = gtk_label_new(title);
-#if GTK_CHECK_VERSION(3, 0, 0)
+# if GTK_CHECK_VERSION(3, 0, 0)
 	g_object_set(label, "halign", GTK_ALIGN_START, NULL);
 	g_object_set(label, "valign", GTK_ALIGN_START, NULL);
 	gtk_widget_override_font(label, bold);
-#else
+# else
 	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.0);
 	gtk_widget_modify_font(label, bold);
-#endif
+# endif
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, TRUE, 0);
 	/* label */
 	label = gtk_label_new(event->notification.message);
-#if GTK_CHECK_VERSION(3, 0, 0)
+# if GTK_CHECK_VERSION(3, 0, 0)
 	g_object_set(label, "halign", GTK_ALIGN_START, NULL);
 	g_object_set(label, "valign", GTK_ALIGN_START, NULL);
-#else
+# else
 	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.0);
-#endif
+# endif
 	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
 	/* button */
@@ -208,8 +232,10 @@ static int _event_notification(NotifyPhonePlugin * notify, PhoneEvent * event)
 	pango_font_description_free(bold);
 	return 1;
 }
+#endif
 
 
+#if defined(GDK_WINDOWING_X11)
 /* widgets */
 /* notify_widget_add */
 static NotifyWidget * _notify_widget_add(NotifyPhonePlugin * notify)
@@ -260,7 +286,7 @@ static void _notify_widget_remove(NotifyPhonePlugin * notify,
 
 
 /* notifywidget_new */
-static NotifyWidget *  _notifywidget_new(NotifyPhonePlugin * notify)
+static NotifyWidget * _notifywidget_new(NotifyPhonePlugin * notify)
 {
 	NotifyWidget * widget;
 
@@ -300,3 +326,4 @@ static gboolean _notifywidget_on_timeout(gpointer data)
 	_notifywidget_on_close(widget);
 	return FALSE;
 }
+#endif
