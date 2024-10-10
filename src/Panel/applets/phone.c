@@ -20,12 +20,16 @@
 #include <errno.h>
 #include <System.h>
 #include <Desktop.h>
-#if GTK_CHECK_VERSION(3, 0, 0)
-# include <gtk/gtkx.h>
+#if defined(GDK_WINDOWING_X11)
+# if GTK_CHECK_VERSION(3, 0, 0)
+#  include <gtk/gtkx.h>
+# else
+#  include <gdk/gdkx.h>
+# endif
 #endif
-#include <gdk/gdkx.h>
 #include <Desktop/Panel/applet.h>
 #include <Desktop/Phone/phone.h>
+
 #define N_(string) string
 
 
@@ -35,8 +39,10 @@
 typedef struct _PanelApplet
 {
 	PanelAppletHelper * helper;
+#if defined(GDK_WINDOWING_X11)
 	GtkWidget * widget;
 	gulong source;
+#endif
 } PhoneApplet;
 
 
@@ -45,6 +51,7 @@ static PhoneApplet * _phone_init(PanelAppletHelper * helper,
 		GtkWidget ** widget);
 static void _phone_destroy(PhoneApplet * phone);
 
+#if defined(GDK_WINDOWING_X11)
 static void _phone_embed(GtkWidget * widget, unsigned long window);
 
 /* callbacks */
@@ -53,6 +60,7 @@ static int _phone_on_message(void * data, uint32_t value1, uint32_t value2,
 static void _phone_on_plug_added(GtkWidget * widget);
 static gboolean _phone_on_plug_removed(GtkWidget * widget);
 static void _phone_on_screen_changed(GtkWidget * widget, GdkScreen * previous);
+#endif
 
 
 /* public */
@@ -77,6 +85,7 @@ PanelAppletDefinition applet =
 static PhoneApplet * _phone_init(PanelAppletHelper * helper,
 		GtkWidget ** widget)
 {
+#if defined(GDK_WINDOWING_X11)
 	PhoneApplet * phone;
 
 	if((phone = malloc(sizeof(*phone))) == NULL)
@@ -94,21 +103,33 @@ static PhoneApplet * _phone_init(PanelAppletHelper * helper,
 			G_CALLBACK(_phone_on_screen_changed), NULL);
 	*widget = phone->widget;
 	return phone;
+#else
+	(void) helper;
+	(void) widget;
+
+	error_set_code(-ENOSYS, "%s", "X11 support not detected");
+	return NULL;
+#endif
 }
 
 
 /* phone_destroy */
 static void _phone_destroy(PhoneApplet * phone)
 {
+#if defined(GDK_WINDOWING_X11)
 	if(phone->source != 0)
 		g_signal_handler_disconnect(phone->widget, phone->source);
 	phone->source = 0;
 	desktop_message_unregister(NULL, _phone_on_message, phone->widget);
 	gtk_widget_destroy(phone->widget);
 	free(phone);
+#else
+	(void) phone;
+#endif
 }
 
 
+#if defined(GDK_WINDOWING_X11)
 /* phone_embed */
 static void _phone_embed(GtkWidget * widget, unsigned long window)
 {
@@ -154,3 +175,4 @@ static void _phone_on_screen_changed(GtkWidget * widget, GdkScreen * previous)
 	desktop_message_register(NULL, PHONE_EMBED_MESSAGE, _phone_on_message,
 			widget);
 }
+#endif
